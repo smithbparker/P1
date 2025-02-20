@@ -2,6 +2,7 @@ package fa.dfa;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,6 +20,7 @@ import fa.State;
  * DFA class implements DFAInterface and FAInterface.
  */
 public class DFA implements DFAInterface {
+    // Major change here! Changed from HashSet to LinkedHashSet to keep order. toString now works!
     private Set<String> states;
     private Set<Character> alphabet;
     private Map<String, DFAState> stateMap;
@@ -26,10 +28,10 @@ public class DFA implements DFAInterface {
     private Set<String> finalStates;
 
     public DFA() {
-        states = new HashSet<>();
-        alphabet = new HashSet<>();
+        states = new LinkedHashSet<>();
+        alphabet = new LinkedHashSet<>();
         stateMap = new HashMap<>();
-        finalStates = new HashSet<>();
+        finalStates = new LinkedHashSet<>();
         startState = null;
     }
 
@@ -172,33 +174,36 @@ public class DFA implements DFAInterface {
     }
 
     @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Q = { ").append(String.join(" ", states)).append(" }\n");
-        sb.append("Sigma = { ");
-        for (char symbol : alphabet) {
-            sb.append(symbol).append(" ");
-        }
-        sb.append("}\n");
+public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("Q = {").append(String.join(" ", states)).append("}\n");
+    sb.append("Sigma = {");
+    for (char symbol : alphabet) {
+        sb.append(symbol).append(" ");
+    }
+    if (!alphabet.isEmpty()) {
+        sb.setLength(sb.length() - 1);  // This is new! What it is doing is removing the first and last space from the set for Q, Sigma, and F, since those are unwanted.
+    }
+    sb.append("}\n");
 
-        sb.append("delta =\n\t");
+    sb.append("delta =\n\t");
+    for (char symbol : alphabet) {
+        sb.append(symbol).append("\t");
+    }
+    sb.append("\n");
+
+    for (String state : states) {
+        sb.append(state).append("\t");
         for (char symbol : alphabet) {
-            sb.append(symbol).append("\t");
+            sb.append(stateMap.get(state).getTransitions().getOrDefault(symbol, new DFAState("-")).getName()).append("\t");
         }
         sb.append("\n");
-
-        for (String state : states) {
-            sb.append(state).append("\t");
-            for (char symbol : alphabet) {
-                sb.append(stateMap.get(state).getTransitions().getOrDefault(symbol, new DFAState("-")).getName()).append("\t");
-            }
-            sb.append("\n");
-        }
-
-        sb.append("q0 = ").append(startState).append("\n");
-        sb.append("F = { ").append(String.join(" ", finalStates)).append(" }");
-
-        return sb.toString();
     }
+
+    sb.append("q0 = ").append(startState).append("\n");
+    sb.append("F = {").append(String.join(" ", finalStates)).append("}");
+
+    return sb.toString();
+}
 }
  
