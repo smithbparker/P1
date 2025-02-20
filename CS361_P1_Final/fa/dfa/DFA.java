@@ -1,8 +1,19 @@
 package fa.dfa;
 
-import fa.FAInterface;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import fa.State;
-import java.util.*;
+
+
+/*
+ * The logic for a DFA within this project.
+ * By extending the DFAInterface, this class defines the methods needed for a DFA's states, alphabet, transitions, and start/final points.
+ * Out of the concrete classes given, we chose to use a HashSet and HashMap for the structure of this class.
+ * @Author Parker Smith, Sabastian Leeper
+ */
 
 /**
  * DFA class implements DFAInterface and FAInterface.
@@ -22,6 +33,11 @@ public class DFA implements DFAInterface {
         startState = null;
     }
 
+      /*
+     * Adds a state to the DFA
+     * @param name of the added state
+     * @return true if the state is added, otherwise false
+     */  
     @Override
     public boolean addState(String name) {
         if (name == null || states.contains(name)) return false;
@@ -30,11 +46,20 @@ public class DFA implements DFAInterface {
         return true;
     }
 
+     /*
+     * Adds a symbol to the alphabet
+     * @param symbol the symbol added to the alphabet
+     */  
     @Override
     public void addSigma(char symbol) {
         alphabet.add(symbol);
     }
 
+    /*
+     * Sets a state as the start state
+     * @param name of the state to be set as the start
+     * @return true if the state is set as start, otherwise false
+     */
     @Override
     public boolean setStart(String name) {
         if (states.contains(name)) {
@@ -44,6 +69,11 @@ public class DFA implements DFAInterface {
         return false;
     }
 
+    /*
+     * Sets a state as final
+     * @param name of the state to be set as final
+     * @return true if the state is set as final, otherwise false
+     */
     @Override
     public boolean setFinal(String name) {
         if (states.contains(name)) {
@@ -52,6 +82,14 @@ public class DFA implements DFAInterface {
         }
         return false;
     }
+
+    /* 
+      * Adds a transition between states on a given symbol
+      * @param fromState the name of the state to transition from
+      * @param toState the name of the state to transition to
+      * @param onSymb the symbol on which the transition occurs
+      * @return true if the transition was added, otherwise false  
+      */  
 
     @Override
     public boolean addTransition(String fromState, String toState, char onSymb) {
@@ -62,6 +100,12 @@ public class DFA implements DFAInterface {
         return true;
     }
 
+     /* 
+     * Swaps two transition symbols in the DFA
+     * @param symb1 the first symbol to swap
+     * @param symb2 the second symbol to swap
+     * @return a new DFA with the swapped symbols
+     */
     @Override
     public DFA swap(char symb1, char symb2) {
         if (!alphabet.contains(symb1) || !alphabet.contains(symb2)) {
@@ -83,6 +127,11 @@ public class DFA implements DFAInterface {
         return newDFA;
     }
 
+     /*
+     * Checks if a string is accepted by the DFA
+     * @param s the string to check
+     * @return true if the string is accepted, otherwise false
+     */  
     @Override
     public boolean accepts(String s) {
         if (startState == null) return false;
@@ -97,21 +146,26 @@ public class DFA implements DFAInterface {
         return finalStates.contains(currentState);
     }
 
+    // Return alphabet (Sigma)
     @Override
     public Set<Character> getSigma() {
         return new HashSet<>(alphabet);
     }
 
+    // Return state object if found
     @Override
     public State getState(String name) {
         return stateMap.getOrDefault(name, null);
     }
 
+    
+    // Return true if state is final
     @Override
     public boolean isFinal(String name) {
         return finalStates.contains(name);
     }
 
+    // Check if state is the start state
     @Override
     public boolean isStart(String name) {
         return name.equals(startState);
